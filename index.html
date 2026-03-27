@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
+  <link rel="icon" type="image/png" href="./bug/S.png">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Portfolio — Creative Designer</title>
@@ -1103,9 +1104,50 @@ body {
   margin-left: 0;
 }
   /* 作品內頁 */
-  .wp-body { padding: 24px 20px 60px; }
-  .wp-meta { grid-template-columns: 1fr; gap: 16px; }
-  .wp-imgs { grid-template-columns: 1fr; }
+  
+  .work-page {
+  overflow-x: hidden;
+}
+.wp-body {
+  padding: 24px 20px 60px;
+  overflow-x: hidden;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.wp-hero {
+  width: 100%;
+  overflow: hidden;
+}
+.wp-imgs {
+  grid-template-columns: 1fr;
+  gap: 8px;
+  width: 100%;
+}
+.wp-img {
+  width: 100%;
+  aspect-ratio: 4/3;
+  overflow: hidden;
+  max-width: 100%;
+  background-size: cover !important;
+  background-position: center !important;
+}頁所有圖片強制不超出螢幕 */
+.wp-body img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+.wp-img img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+/* iframe（影片）也限制寬度 */
+.wp-hero iframe {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16/9;
+}
 
   /* FOOTER */
   .footer-top { grid-template-columns: 1fr; }
@@ -1178,9 +1220,75 @@ body {
   }
 
 }
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+
+#wp-work-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 48px 0 32px;
+  margin-top: 48px;
+  border-top: 1px solid var(--border);
+  gap: 16px;
+}
+#wp-work-nav button {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 10px 24px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+#wp-work-nav button:hover {
+  background: var(--ink);
+  color: #fff;
+  border-color: var(--ink);
+}
+#wp-work-nav button:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+#wp-work-nav button:disabled:hover {
+  background: none;
+  color: var(--ink);
+  border-color: var(--border);
+}
+#wp-work-nav span {
+  font-size: 12px;
+  color: var(--soft);
+}
+/* 作品頁切換動畫 */
+@keyframes wpFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(32px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.wp-body.entering {
+  animation: wpFadeUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
 </style>
 </head>
 <body>
+  
 <canvas id="cursor-trail" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999;"></canvas>
 
 <!-- Fixed vertical grid lines over entire page, fades out at work section -->
@@ -1198,6 +1306,7 @@ body {
       <li><a href="#about">About</a></li>
     </ul>
     <a href="#contact" class="hero-nav-cta">Contact ↗</a>
+    
   </div>
 
   <!-- Year above photo -->
@@ -1540,12 +1649,12 @@ body {
     const ctx = bgCanvas.getContext('2d');
     let W, H;
     const orbs = Array.from({length: 6}, (_, i) => ({
-      x: Math.random(), y: Math.random(),
-      r: 0.25 + Math.random() * 0.22,
-      vx: (Math.random() - 0.5) * 0.00015,
-      vy: (Math.random() - 0.5) * 0.00015,
-      hue: i * 60
-    }));
+  x: Math.random(), y: Math.random(),
+  r: 0.25 + Math.random() * 0.22,
+  vx: (Math.random() - 0.5) * 0.00015,
+  vy: (Math.random() - 0.5) * 0.00015,
+  hue: i * 60
+}));
     function resize() {
       W = bgCanvas.width  = window.innerWidth;
       H = bgCanvas.height = window.innerHeight;
@@ -1555,12 +1664,12 @@ body {
     function drawOrbs() {
       ctx.clearRect(0, 0, W, H);
       orbs.forEach(o => {
-        o.x += o.vx; o.y += o.vy;
-        if (o.x < 0 || o.x > 1) o.vx *= -1;
-        if (o.y < 0 || o.y > 1) o.vy *= -1;
-        const g = ctx.createRadialGradient(o.x*W, o.y*H, 0, o.x*W, o.y*H, o.r*Math.min(W,H));
-        g.addColorStop(0, `hsla(${o.hue},0%,60%,${orbAlpha})`);
-        g.addColorStop(1, `hsla(${o.hue},0%,60%,0)`);
+       o.x += o.vx; o.y += o.vy;
+if (o.x < 0 || o.x > 1) o.vx *= -1;
+if (o.y < 0 || o.y > 1) o.vy *= -1;
+const g = ctx.createRadialGradient(o.x*W, o.y*H, 0, o.x*W, o.y*H, o.r*Math.min(W,H));
+g.addColorStop(0, `hsla(${o.hue},0%,60%,${orbAlpha})`);
+g.addColorStop(1, `hsla(${o.hue},0%,60%,0)`);
         ctx.fillStyle = g;
         ctx.beginPath();
         ctx.arc(o.x*W, o.y*H, o.r*Math.min(W,H), 0, Math.PI*2);
@@ -1921,6 +2030,18 @@ body {
     const page = document.getElementById('work-page');
     page.classList.add('open');
     page.scrollTop = 0;
+    // 建立上一個/下一個按鈕
+const existingNav = document.getElementById('wp-work-nav');
+if (existingNav) existingNav.remove();
+
+const workNav = document.createElement('div');
+workNav.id = 'wp-work-nav';
+workNav.innerHTML = `
+  <button onclick="navigateWork(${i - 1})" ${i === 0 ? 'disabled' : ''}>← Prev</button>
+  <span>${i + 1} / ${works.length}</span>
+  <button onclick="navigateWork(${i + 1})" ${i === works.length - 1 ? 'disabled' : ''}>Next →</button>
+`;
+document.querySelector('.wp-body').appendChild(workNav);
     document.body.classList.add('work-page-open');
     document.body.style.overflow = 'hidden';
     history.pushState({ workOpen: true, workIndex: i }, '', '#work-' + i);
@@ -1987,6 +2108,70 @@ function resetTilesForMobile() {
 
 resetTilesForMobile();
 window.addEventListener('resize', resetTilesForMobile);
+// 滑動浮出動畫
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.15 });
+
+document.querySelectorAll(
+  '.work-tile, .about-profile, .about-col, .resume-entry, .about-skill-tag, .sec-label, .work-meta-bar, .site-footer, .footer-talk, .footer-top'
+).forEach(el => {
+  el.classList.add('reveal');
+  revealObserver.observe(el);
+});
+
+
+// 手機版修正 natural 圖片高度
+function fixMobileImages() {
+  if (window.innerWidth <= 760) {
+    document.querySelectorAll('.wp-img').forEach(d => {
+      // 如果是 natural 模式（有 img 子元素）
+      if (d.querySelector('img')) {
+        d.style.height = 'auto';
+        d.style.aspectRatio = 'unset';
+      } else {
+        // 背景圖模式，確保有高度
+        if (!d.style.aspectRatio || d.style.aspectRatio === 'unset') {
+          d.style.aspectRatio = '4/3';
+        }
+        d.style.height = '';
+      }
+    });
+  }
+}
+
+// 每次開啟作品後執行
+const _origOpenWork = openWork;
+openWork = function(i) {
+  _origOpenWork(i);
+  setTimeout(fixMobileImages, 50);
+};
+
+window.addEventListener('resize', fixMobileImages);
+function navigateWork(index) {
+  if (index < 0 || index >= works.length) return;
+  const wpBody = document.querySelector('.wp-body');
+  // 先淡出
+  wpBody.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
+  wpBody.style.opacity = '0';
+  wpBody.style.transform = 'translateY(16px)';
+  setTimeout(() => {
+    openWork(index);
+    document.getElementById('work-page').scrollTop = 0;
+    // 再浮現
+    wpBody.style.transition = '';
+    wpBody.style.opacity = '';
+    wpBody.style.transform = '';
+    wpBody.classList.remove('entering');
+    void wpBody.offsetWidth; // 強制 reflow
+    wpBody.classList.add('entering');
+  }, 250);
+}
+
 </script>
 </body>
 </html>
